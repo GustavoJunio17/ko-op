@@ -1,10 +1,10 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
-import { updateTag } from "next/cache";
-import { getSheet, valueFor, type SheetData, type SheetVersion } from "@/content/sheets";
+import { revalidatePath } from "next/cache";
+import { getSheet, valueFor, type SheetData } from "@/content/sheets";
 import { checkPassword } from "@/lib/auth";
-import { readSheet, SHEETS_TAG, writeSheet } from "@/lib/storage";
+import { updateSheet } from "@/lib/storage";
 
 export type SaveResult = { ok: true; changed: boolean } | { ok: false; error: string };
 
@@ -13,6 +13,9 @@ export async function saveSheet(
   input: SheetData,
   meta: { author: string; note: string; password: string },
 ): Promise<SaveResult> {
+  if (!process.env.ADMIN_PASSWORD && process.env.NODE_ENV !== "development") {
+    return { ok: false, error: "Edição indisponível: a variável ADMIN_PASSWORD não está configurada no servidor." };
+  }
   if (!checkPassword(meta.password)) return { ok: false, error: "Senha incorreta." };
   const sheet = getSheet(id);
   if (!sheet) return { ok: false, error: "Ficha não encontrada." };
@@ -22,27 +25,27 @@ export async function saveSheet(
     Object.fromEntries(sheet.fields.map((f) => [f.key, valueFor(f, d)]));
   const data = normalize(input);
 
+  let changed: boolean;
   try {
-    const doc = await readSheet(id, { fresh: true });
-    if (JSON.stringify(normalize(doc.data)) === JSON.stringify(data)) {
-      return { ok: true, changed: false };
-    }
-
-    const version: SheetVersion = {
-      id: randomUUID(),
-      at: new Date().toISOString(),
-      author: meta.author.trim().slice(0, 80) || "Anônimo",
-      note: meta.note.trim().slice(0, 280),
-      data,
-    };
-    await writeSheet(
-      id,
-      { data, versions: [...doc.versions, version] },
-      `docs(roadmap): ${sheet.title} — ${version.note || "atualização"} (${version.author})`,
-    );
+    changed = await updateSheet(id, (doc) => {
+      if (JSON.stringify(normalize(doc.data)) === JSON.stringify(data)) return null;
+      return {
+        data,
+        versions: [
+          ...doc.versions,
+          {
+            id: randomUUID(),
+            at: new Date().toISOString(),
+            author: meta.author.trim().slice(0, 80) || "Anônimo",
+            note: meta.note.trim().slice(0, 280),
+            data,
+          },
+        ],
+      };
+    });
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Falha ao salvar." };
   }
-  updateTag(SHEETS_TAG);
-  return { ok: true, changed: true };
+  if (changed) revalidatePath("/");
+  return { ok: true, changed };
 }

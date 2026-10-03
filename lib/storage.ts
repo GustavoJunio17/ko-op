@@ -1,42 +1,34 @@
 import "server-only";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { BlobPreconditionFailedError, get, put } from "@vercel/blob";
 import type { SheetDoc } from "@/content/sheets";
 
-// Cada ficha vive em content/data/<id>.json com o valor atual e o histórico
-// de versões (ver SheetDoc). Onde o arquivo é gravado depende do ambiente:
+// Cada ficha é um JSON com o valor atual e o histórico de versões (SheetDoc).
+// Onde ele é gravado depende do ambiente:
 //
-// - "github":   GITHUB_TOKEN definido. Lê e grava pela API do GitHub (produção).
-// - "local":    sem token, em desenvolvimento. Lê e grava no disco.
-// - "readonly": sem token, em produção. Só leitura dos arquivos do deploy.
+// - "blob":     um Blob store da Vercel está conectado ao projeto (BLOB_STORE_ID,
+//               com autenticação automática, ou BLOB_READ_WRITE_TOKEN). Produção.
+// - "local":    sem Blob, em desenvolvimento. Lê e grava em content/data/ no disco.
+// - "readonly": sem Blob, em produção. Só leitura dos arquivos do deploy.
+//
+// No modo "blob", uma ficha que ainda não foi salva no Blob usa o arquivo de
+// content/data/ do repositório como ponto de partida.
 
-export type StorageMode = "github" | "local" | "readonly";
+export type StorageMode = "blob" | "local" | "readonly";
 
 const DATA_DIR = "content/data";
-export const SHEETS_TAG = "sheets";
+const BLOB_PREFIX = "roadmap";
+
+const empty = (): SheetDoc => ({ data: {}, versions: [] });
 
 export function storageMode(): StorageMode {
-  if (process.env.GITHUB_TOKEN) return "github";
+  if (process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN) return "blob";
   return process.env.NODE_ENV === "development" ? "local" : "readonly";
 }
 
-function repo() {
-  const [envOwner, envName] = (process.env.GITHUB_REPO ?? "").split("/");
-  const owner = envOwner || process.env.VERCEL_GIT_REPO_OWNER;
-  const name = envName || process.env.VERCEL_GIT_REPO_SLUG;
-  const branch = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || "main";
-  if (!owner || !name) {
-    throw new Error("Defina GITHUB_REPO (dono/repositorio) para usar o GitHub como storage.");
-  }
-  return { owner, name, branch };
-}
-
-function filePath(id: string) {
-  return `${DATA_DIR}/${id}.json`;
-}
-
 function parse(text: string | null | undefined): SheetDoc {
-  if (!text) return { data: {}, versions: [] };
+  if (!text) return empty();
   try {
     const doc = JSON.parse(text);
     return {
@@ -44,74 +36,74 @@ function parse(text: string | null | undefined): SheetDoc {
       versions: Array.isArray(doc?.versions) ? doc.versions : [],
     };
   } catch {
-    return { data: {}, versions: [] };
+    return empty();
   }
 }
 
-async function github(endpoint: string, init?: RequestInit & { next?: NextFetchRequestConfig }) {
-  const res = await fetch(`https://api.github.com${endpoint}`, {
-    ...init,
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-      ...init?.headers,
-    },
-  });
-  if (res.status === 404) return null;
-  if (!res.ok) {
-    throw new Error(`GitHub ${res.status}: ${await res.text()}`);
-  }
-  return res.json();
-}
-
-type ContentsResponse = { content: string; sha: string };
-
-async function githubContents(id: string, fresh: boolean) {
-  const { owner, name, branch } = repo();
-  const content: ContentsResponse | null = await github(
-    `/repos/${owner}/${name}/contents/${filePath(id)}?ref=${encodeURIComponent(branch)}`,
-    fresh ? { cache: "no-store" } : { cache: "force-cache", next: { tags: [SHEETS_TAG] } },
-  );
-  return content;
-}
-
-// `fresh` ignora o cache; usado antes de gravar para não perder versões.
-export async function readSheet(id: string, { fresh = false } = {}): Promise<SheetDoc> {
-  if (storageMode() === "github") {
-    const content = await githubContents(id, fresh);
-    return parse(content ? Buffer.from(content.content, "base64").toString("utf8") : null);
-  }
+async function readRepoFile(id: string): Promise<SheetDoc> {
   try {
-    return parse(await readFile(path.join(process.cwd(), filePath(id)), "utf8"));
+    return parse(await readFile(path.join(process.cwd(), DATA_DIR, `${id}.json`), "utf8"));
   } catch {
-    return { data: {}, versions: [] };
+    return empty();
   }
 }
 
-export async function writeSheet(id: string, doc: SheetDoc, message: string) {
-  const body = JSON.stringify(doc, null, 2) + "\n";
+// Lê do Blob sem cache (as edições precisam aparecer na hora) e devolve o
+// etag para a gravação detectar se alguém salvou a mesma ficha no meio tempo.
+async function readBlob(id: string): Promise<{ doc: SheetDoc; etag?: string }> {
+  const res = await get(`${BLOB_PREFIX}/${id}.json`, { access: "private", useCache: false });
+  if (!res || res.statusCode !== 200) return { doc: await readRepoFile(id) };
+  return { doc: parse(await new Response(res.stream).text()), etag: res.blob.etag };
+}
+
+export async function readSheet(id: string): Promise<SheetDoc> {
+  if (storageMode() === "blob") return (await readBlob(id)).doc;
+  return readRepoFile(id);
+}
+
+// Lê a ficha, aplica `update` e grava. Se outra pessoa salvou a mesma ficha
+// entre a leitura e a gravação, tenta de novo sobre a versão mais nova.
+// `update` devolve null quando não há nada para gravar.
+export async function updateSheet(
+  id: string,
+  update: (doc: SheetDoc) => SheetDoc | null,
+): Promise<boolean> {
   const mode = storageMode();
 
   if (mode === "readonly") {
-    throw new Error("Edição desativada: configure GITHUB_TOKEN no ambiente.");
+    throw new Error(
+      "Edição indisponível: conecte um Blob store ao projeto na Vercel (Storage → Create → Blob).",
+    );
   }
 
   if (mode === "local") {
-    await writeFile(path.join(process.cwd(), filePath(id)), body, "utf8");
-    return;
+    const next = update(await readRepoFile(id));
+    if (!next) return false;
+    await writeFile(
+      path.join(process.cwd(), DATA_DIR, `${id}.json`),
+      JSON.stringify(next, null, 2) + "\n",
+      "utf8",
+    );
+    return true;
   }
 
-  const { owner, name, branch } = repo();
-  const current = await githubContents(id, true);
-  await github(`/repos/${owner}/${name}/contents/${filePath(id)}`, {
-    method: "PUT",
-    cache: "no-store",
-    body: JSON.stringify({
-      message,
-      branch,
-      content: Buffer.from(body, "utf8").toString("base64"),
-      ...(current ? { sha: current.sha } : {}),
-    }),
-  });
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { doc, etag } = await readBlob(id);
+    const next = update(doc);
+    if (!next) return false;
+    try {
+      await put(`${BLOB_PREFIX}/${id}.json`, JSON.stringify(next), {
+        access: "private",
+        contentType: "application/json",
+        addRandomSuffix: false,
+        allowOverwrite: true,
+        ...(etag ? { ifMatch: etag } : {}),
+      });
+      return true;
+    } catch (e) {
+      if (e instanceof BlobPreconditionFailedError) continue;
+      throw e;
+    }
+  }
+  throw new Error("Outra pessoa está salvando esta ficha agora. Tente de novo.");
 }

@@ -4,7 +4,7 @@ import { roadmapVersions, snapshotAt } from "@/content/versions";
 import { formatDateTime } from "@/content/format";
 import { SheetSection } from "@/components/SheetSection";
 import { VersionPicker } from "@/components/VersionPicker";
-import { readSheet, storageMode } from "@/lib/storage";
+import { readSheet } from "@/lib/storage";
 
 const statusText: Record<SheetStatus, string> = {
   vazio: "A preencher",
@@ -34,7 +34,8 @@ export default async function Home({
   const data = viewing ? snapshotAt(docs, viewing.at) : docs.map((d) => d.data);
 
   // Qualquer um vê o botão Editar; a senha (ADMIN_PASSWORD) é pedida ao salvar.
-  const canEdit = storageMode() !== "readonly" && !viewing;
+  // Se faltar configuração em produção, o salvar explica o que falta em vez de esconder o botão.
+  const canEdit = !viewing;
   const needsPassword = !!process.env.ADMIN_PASSWORD;
   const statuses = sheets.map((s, i) => sheetStatus(s, data[i]));
   const filled = statuses.filter((s) => s === "concluido").length;
