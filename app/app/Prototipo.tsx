@@ -235,6 +235,21 @@ export function Prototipo() {
     avisar("Os amigos entraram pelo link e já receberam o Pix da parte deles.");
   };
 
+  // Link da página do servidor: é o que o QR do convite abre na câmera do celular.
+  const linkStatus = (x: Grupo) => {
+    const q = new URLSearchParams({
+      g: x.nome,
+      j: x.jogo,
+      e: x.estado === "ligado" ? "ligado" : "dormindo",
+      n: String(x.membros.length),
+      on: String(x.membros.filter((m) => m.online).length),
+      t: x.tamanhoId,
+      d: x.detalhe,
+      p: x.plano,
+    });
+    return `${window.location.origin}/app/s?${q}`;
+  };
+
   const parteDe = (x: Grupo) => (x.plano === "horas" ? x.recarga : tamanho(x.tamanhoId).mes) / x.membros.length;
 
   const pagarAmigos = () => {
@@ -616,6 +631,9 @@ export function Prototipo() {
                 </div>
               )}
               <p className={s.detalhe}>{g.detalhe}</p>
+              <a className={s.link} href={linkStatus(g)} target="_blank" rel="noreferrer" style={{ justifySelf: "center" }}>
+                Abrir a página do servidor
+              </a>
             </section>
           )}
 
@@ -707,13 +725,13 @@ export function Prototipo() {
                   <h3 className={s.folhaTitulo}>Chame a galera</h3>
                   <p className={s.texto}>Quem entrar pelo link cai direto no servidor, com a versão e os mods certos. Sem digitar IP.</p>
                   <div className={s.convite}>
-                    <Qr texto={g.id} />
-                    <code>ko-op.vercel.app/c/{g.id.slice(-5)}</code>
+                    <Qr texto={linkStatus(g)} tamanho={176} />
+                    <span className={s.dica}>Aponte a câmera do celular: abre a página do servidor.</span>
                   </div>
                   <button
                     className={s.botao}
                     onClick={() => {
-                      navigator.clipboard?.writeText(`https://ko-op.vercel.app/c/${g.id.slice(-5)}`).catch(() => {});
+                      navigator.clipboard?.writeText(linkStatus(g)).catch(() => {});
                       avisar("Link copiado. Mande no grupo de vocês.");
                     }}
                   >
@@ -740,7 +758,7 @@ export function Prototipo() {
                     {reais(folha.valor / g.membros.length)} é a sua parte da recarga de {reais(folha.valor)}. Cada amigo recebe o Pix dele.
                   </p>
                   <div className={s.convite}>
-                    <Qr texto={`pix${folha.valor}`} />
+                    <Qr texto="Ko-op (protótipo): este Pix é simulado, nenhum valor é cobrado." />
                   </div>
                   <button className={s.botaoDinheiro} onClick={() => recarregar(folha.valor)}>
                     Simular: paguei {reais(folha.valor / g.membros.length)}

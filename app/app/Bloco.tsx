@@ -1,3 +1,4 @@
+import QRCode from "qrcode";
 import type { Jogo } from "./precos";
 import s from "./app.module.css";
 
@@ -32,6 +33,11 @@ export function Bloco({ jogo, estado }: { jogo: Jogo; estado: Estado }) {
           </g>
         )}
       </svg>
+      {jogo === "gta" && (
+        <span className={s.marcaJogo}>
+          <EmblemaGta />
+        </span>
+      )}
       {estado === "dormindo" && (
         <span className={s.zz}>
           <span>z</span>
@@ -43,35 +49,29 @@ export function Bloco({ jogo, estado }: { jogo: Jogo; estado: Estado }) {
   );
 }
 
-// QR "de mentira", mas com cara de QR: os três quadrados de canto e um miolo determinístico.
+// QR de verdade (dá pra escanear), desenhado com as cores do app.
 export function Qr({ texto, tamanho = 148 }: { texto: string; tamanho?: number }) {
-  const n = 25;
-  let h = 0;
-  for (const ch of texto) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  const canto = (x: number, y: number) => x < 8 && y < 8 || x >= n - 8 && y < 8 || x < 8 && y >= n - 8;
+  const { size: n, data } = QRCode.create(texto, { errorCorrectionLevel: "M" }).modules;
   const cells: React.ReactNode[] = [];
   for (let y = 0; y < n; y++)
-    for (let x = 0; x < n; x++) {
-      if (canto(x, y)) continue;
-      h = (h * 1103515245 + 12345) >>> 0;
-      if ((h >>> 16) % 2) cells.push(<rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" />);
-    }
-  const finder = (x: number, y: number) => (
-    <g key={`f${x}${y}`}>
-      <rect x={x} y={y} width="7" height="7" />
-      <rect x={x + 1} y={y + 1} width="5" height="5" fill="#fff" />
-      <rect x={x + 2} y={y + 2} width="3" height="3" />
-    </g>
-  );
+    for (let x = 0; x < n; x++) if (data[y * n + x]) cells.push(<rect key={`${x}-${y}`} x={x} y={y} width="1.02" height="1.02" />);
   return (
-    <svg viewBox={`-1 -1 ${n + 2} ${n + 2}`} width={tamanho} height={tamanho} className={s.qr} role="img" aria-label="QR code">
-      <rect x="-1" y="-1" width={n + 2} height={n + 2} fill="#fff" />
-      <g fill="#172036">
-        {cells}
-        {finder(0, 0)}
-        {finder(n - 7, 0)}
-        {finder(0, n - 7)}
-      </g>
+    <svg viewBox={`-2 -2 ${n + 4} ${n + 4}`} width={tamanho} height={tamanho} className={s.qr} role="img" aria-label="QR code">
+      <rect x="-2" y="-2" width={n + 4} height={n + 4} fill="#fff" />
+      <g fill="#172036">{cells}</g>
+    </svg>
+  );
+}
+
+// Selo do GTA V: o "V" grande sobre o fundo escuro, no espírito da capa do jogo.
+export function EmblemaGta({ tamanho = 40 }: { tamanho?: number }) {
+  return (
+    <svg viewBox="0 0 40 40" width={tamanho} height={tamanho} className={s.emblema} role="img" aria-label="GTA V">
+      <rect width="40" height="40" rx="9" fill="#0d1220" />
+      <text x="20" y="11.5" textAnchor="middle" fontSize="6.4" fontWeight="800" fill="#fff" letterSpacing="0.6" fontFamily="var(--font-display), system-ui, sans-serif">
+        GTA
+      </text>
+      <path d="M7.5 14 H15 L20 28.5 L25 14 H32.5 L23.5 35 H16.5 Z" fill="#7fd36b" stroke="#2f7a35" strokeWidth="1.2" strokeLinejoin="round" />
     </svg>
   );
 }
