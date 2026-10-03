@@ -2,10 +2,8 @@
 
 import { randomUUID } from "node:crypto";
 import { updateTag } from "next/cache";
-import { redirect } from "next/navigation";
-import { diffSheet } from "@/content/diff";
 import { getSheet, valueFor, type SheetData, type SheetVersion } from "@/content/sheets";
-import { isAdmin, signIn, signOut } from "@/lib/auth";
+import { checkPassword } from "@/lib/auth";
 import { readSheet, SHEETS_TAG, writeSheet } from "@/lib/storage";
 
 export type SaveResult = { ok: true; changed: boolean } | { ok: false; error: string };
@@ -13,20 +11,22 @@ export type SaveResult = { ok: true; changed: boolean } | { ok: false; error: st
 export async function saveSheet(
   id: string,
   input: SheetData,
-  meta: { author: string; note: string },
+  meta: { author: string; note: string; password: string },
 ): Promise<SaveResult> {
-  if (!(await isAdmin())) return { ok: false, error: "Sem permissão para editar." };
+  if (!checkPassword(meta.password)) return { ok: false, error: "Senha incorreta." };
   const sheet = getSheet(id);
   if (!sheet) return { ok: false, error: "Ficha não encontrada." };
 
   // Só persiste campos conhecidos, já no formato do schema.
-  const data: SheetData = Object.fromEntries(
-    sheet.fields.map((f) => [f.key, valueFor(f, input)]),
-  );
+  const normalize = (d: SheetData): SheetData =>
+    Object.fromEntries(sheet.fields.map((f) => [f.key, valueFor(f, d)]));
+  const data = normalize(input);
 
   try {
     const doc = await readSheet(id, { fresh: true });
-    if (diffSheet(sheet, doc.data, data).length === 0) return { ok: true, changed: false };
+    if (JSON.stringify(normalize(doc.data)) === JSON.stringify(data)) {
+      return { ok: true, changed: false };
+    }
 
     const version: SheetVersion = {
       id: randomUUID(),
@@ -45,24 +45,4 @@ export async function saveSheet(
   }
   updateTag(SHEETS_TAG);
   return { ok: true, changed: true };
-}
-
-// Versões da mais recente para a mais antiga.
-export async function getVersions(id: string): Promise<SheetVersion[]> {
-  if (!getSheet(id)) return [];
-  const doc = await readSheet(id);
-  return [...doc.versions].reverse();
-}
-
-export type LoginState = { error?: string };
-
-export async function login(_: LoginState, formData: FormData): Promise<LoginState> {
-  const ok = await signIn(String(formData.get("password") ?? ""));
-  if (!ok) return { error: "Senha incorreta." };
-  redirect("/");
-}
-
-export async function logout() {
-  await signOut();
-  redirect("/");
 }

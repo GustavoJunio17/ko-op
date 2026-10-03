@@ -7,7 +7,7 @@ import type {
   TextValue,
 } from "@/content/sheets";
 
-const empty = <span className="empty">A preencher</span>;
+const empty = <span className="empty">—</span>;
 
 function Lines({ text }: { text: string }) {
   const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
