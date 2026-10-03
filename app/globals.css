@@ -1,0 +1,250 @@
+:root {
+  --bg: #0b0d12;
+  --surface: #12151d;
+  --border: #232836;
+  --text: #e7e9ee;
+  --muted: #8b92a5;
+  --accent: #7cf29c;
+  --accent-2: #5b8cff;
+  --warn: #ffc857;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #1a2a3a55, transparent),
+    radial-gradient(900px 500px at 110% 10%, #1d3b2a44, transparent),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Hero */
+.hero {
+  padding: 96px 0 56px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hero h1 {
+  font-size: clamp(3rem, 10vw, 6rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  margin: 12px 0 20px;
+  background: linear-gradient(90deg, var(--text), var(--accent) 70%, var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lede {
+  font-size: 1.2rem;
+  color: var(--muted);
+  max-width: 56ch;
+}
+
+/* Sumário */
+.toc {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+  margin-bottom: 56px;
+}
+
+.toc ol {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+.toc a {
+  color: var(--text);
+  text-decoration: none;
+  display: inline-flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.toc a:hover {
+  color: var(--accent);
+}
+
+.num {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Timeline */
+.timeline {
+  list-style: none;
+  position: relative;
+  padding-left: 32px;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(var(--accent), var(--border) 60%);
+}
+
+.stage {
+  position: relative;
+  padding-bottom: 56px;
+  scroll-margin-top: 24px;
+}
+
+.marker {
+  position: absolute;
+  left: -32px;
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--border);
+}
+
+.marker[data-status="concluido"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px #7cf29c22;
+}
+
+.marker[data-status="em-andamento"] {
+  border-color: var(--warn);
+  box-shadow: 0 0 0 4px #ffc85722;
+}
+
+.stage-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+}
+
+.stage-head h2 {
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+}
+
+.badge {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.badge[data-status="concluido"] {
+  color: var(--accent);
+  border-color: #7cf29c55;
+}
+
+.badge[data-status="em-andamento"] {
+  color: var(--warn);
+  border-color: #ffc85755;
+}
+
+.summary {
+  color: var(--muted);
+  margin: 8px 0 24px;
+}
+
+.fields {
+  display: grid;
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 16px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.field dt {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  padding-top: 3px;
+}
+
+.field ul {
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.field li {
+  position: relative;
+  padding-left: 18px;
+}
+
+.field li::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.stage-next p {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 0 48px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 64px 0 40px;
+  }
+
+  .field {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 16px;
+  }
+}
