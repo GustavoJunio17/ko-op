@@ -1,28 +1,23 @@
-import { stages, type Field, type StageStatus } from "@/content/roadmap";
+import Link from "next/link";
+import { sheets } from "@/content/sheets";
+import { SheetCard } from "@/components/SheetCard";
+import { isAdmin } from "@/lib/auth";
+import { readSheet, storageMode } from "@/lib/storage";
+import { logout } from "./actions";
 
-const statusLabel: Record<StageStatus, string> = {
-  concluido: "Concluído",
-  "em-andamento": "Em andamento",
-  planejado: "Planejado",
-};
+export default async function Home() {
+  const [admin, data] = await Promise.all([
+    isAdmin(),
+    Promise.all(sheets.map((s) => readSheet(s.id))),
+  ]);
+  const mode = storageMode();
+  const canEdit = admin && mode !== "readonly";
 
-function FieldValue({ value }: { value: Field["value"] }) {
-  if (typeof value === "string") return <p>{value}</p>;
-  return (
-    <ul>
-      {value.map((item) => (
-        <li key={item}>{item}</li>
-      ))}
-    </ul>
-  );
-}
-
-export default function Home() {
   return (
     <main>
       <header className="hero">
         <span className="eyebrow">Statum · Roadmap</span>
-        <h1>Ko-op</h1>
+        <h1>Ko-oP</h1>
         <p className="lede">
           O servidor do seu grupo pronto em um clique. Pague só as horas
           jogadas, divida a conta por PIX e encontre gente pra jogar junto.
@@ -31,48 +26,43 @@ export default function Home() {
 
       <nav className="toc" aria-label="Etapas do roadmap">
         <ol>
-          {stages.map((stage, i) => (
-            <li key={stage.id}>
-              <a href={`#${stage.id}`}>
+          {sheets.map((sheet, i) => (
+            <li key={sheet.id}>
+              <a href={`#${sheet.id}`}>
                 <span className="num">{String(i + 1).padStart(2, "0")}</span>
-                {stage.title}
+                {sheet.title}
               </a>
             </li>
           ))}
         </ol>
       </nav>
 
+      {admin && mode === "readonly" && (
+        <p className="error">
+          Edição desativada: configure GITHUB_TOKEN no ambiente para salvar versões.
+        </p>
+      )}
+
       <ol className="timeline">
-        {stages.map((stage, i) => (
-          <li key={stage.id} id={stage.id} className="stage">
-            <div className="marker" data-status={stage.status} />
-            <div className="stage-head">
-              <span className="num">{String(i + 1).padStart(2, "0")}</span>
-              <h2>{stage.title}</h2>
-              <span className="badge" data-status={stage.status}>
-                {statusLabel[stage.status]}
-              </span>
-            </div>
-            {stage.summary && <p className="summary">{stage.summary}</p>}
-            <dl className="fields">
-              {stage.fields.map((field) => (
-                <div key={field.label} className="field">
-                  <dt>{field.label}</dt>
-                  <dd>
-                    <FieldValue value={field.value} />
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </li>
+        {sheets.map((sheet, i) => (
+          <SheetCard key={sheet.id} sheet={sheet} data={data[i].data} index={i} canEdit={canEdit} />
         ))}
-        <li className="stage stage-next">
-          <div className="marker" data-status="planejado" />
-          <p>Próximas etapas em construção.</p>
-        </li>
       </ol>
 
-      <footer className="footer">© {new Date().getFullYear()} Statum</footer>
+      <footer className="footer">
+        <span>© {new Date().getFullYear()} Statum</span>
+        {admin && process.env.ADMIN_PASSWORD ? (
+          <form action={logout}>
+            <button type="submit" className="link">
+              Sair do modo edição
+            </button>
+          </form>
+        ) : !admin ? (
+          <Link href="/login" className="link">
+            Editar
+          </Link>
+        ) : null}
+      </footer>
     </main>
   );
 }

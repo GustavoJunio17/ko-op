@@ -1,0 +1,77 @@
+{
+  "data": {
+    "produto": "Aplicativo, no computador, na web e mobile, em que uma pessoa ou um grupo paga e joga no seu próprio servidor, possuindo funcionalidades exclusivas do mercado.",
+    "usuario": "Grupos de amigos ou pessoas que buscam jogar em grupo no PC jogos cooperativos e de sobrevivência ou de RolePlaying, como Minecraft ou GTA VI.",
+    "acao": "Criar o servidor do grupo, entrar e configurar (mods, backup, segurança e outras configurações técnicas) no jogo com um clique, com o servidor ligado e tudo configurado.\nPagar só as horas jogadas e dividir a conta por PIX.\nAcesso a comunidades para encontrar outros entusiastas para jogar juntos.\nSuporte e atendimento nível Statum.",
+    "afetados": "Quem organiza o grupo: hoje configura tudo sozinho, paga o servidor inteiro e cobra os amigos.\nOs amigos que desistem de jogar junto porque entrar é complicado.\nPessoas que ainda não têm o grupo de amigos para jogar juntos.",
+    "beneficio": "Menos tempo entre decidir jogar e estar jogando.\nFim do mês pago por um servidor vazio.\nFim da cobrança entre amigos.\nFacilidade na configuração e para jogar.\nComunidade para encontrar pessoas com vontade de jogar.",
+    "metrica": "Tempo entre criar o servidor e a primeira partida com três ou mais amigos.\nNúmero de pagantes por grupo.\nGrupos que voltam a jogar no mês seguinte.\nCrescimento da comunidade.",
+    "frase": "Nosso aplicativo para computador, web e celular permite que grupos de amigos, ou quem busca um grupo, tenham o próprio servidor de jogo pronto em um clique, pagando só as horas jogadas, dividindo a conta por PIX e encontrando parceiros na comunidade, o que afeta quem hoje configura e paga tudo sozinho, ou não tem com quem jogar, ao tornar rápido, barato e fácil jogar em grupo."
+  },
+  "versions": [
+    {
+      "id": "00000000-0000-4000-8000-000000000101",
+      "at": "2026-09-27T15:00:00.000Z",
+      "author": "Equipe",
+      "note": "V1 — Ideia inicial: hospedagem pela web",
+      "detail": "Hospedagem de servidores de jogos pela web, no modelo de um grande host estrangeiro. Escrita neste formato a partir do que estava registrado no projeto na época.",
+      "data": {
+        "produto": "Plataforma web para contratar, configurar e gerenciar servidores de jogos, no modelo do Nitrado.",
+        "usuario": "Jogadores que querem um servidor próprio. Público ainda não definido na época.",
+        "acao": "Contratar e gerenciar um servidor de forma instantânea.",
+        "afetados": "Não definido na época.",
+        "beneficio": "Servidor no ar em minutos, no Brasil.",
+        "metrica": "Não definida na época.",
+        "frase": "Nossa plataforma web permite que jogadores contratem e gerenciem servidores de jogos na hora, o que afeta quem quer um servidor próprio ao dar acesso rápido a um servidor no Brasil."
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000102",
+      "at": "2026-09-29T15:00:00.000Z",
+      "author": "Equipe",
+      "note": "V2 — Uso por hora e divisão da conta",
+      "detail": "Por que mudou: a pesquisa de mercado mostrou que os hosts brasileiros já entregam servidor no país, PIX e ativação em menos de um minuto. A ideia não tinha diferencial, e o problema e o público ainda estavam em branco. Escrita neste formato a partir do que estava registrado no projeto na época.",
+      "data": {
+        "produto": "Painel web de aluguel de servidores de jogos, com cobrança por hora e divisão do custo.",
+        "usuario": "Grupos de 3 a 10 amigos que jogam juntos no PC.\nDonos de comunidade como público secundário.",
+        "acao": "Alugar o servidor pagando só as horas jogadas e dividir a conta por PIX, por um link.",
+        "afetados": "Quem banca o servidor sozinho e depois cobra os outros.",
+        "beneficio": "Fim do mês pago por um servidor vazio.\nFim da cobrança entre amigos.",
+        "metrica": "Número de pagantes por grupo.\nGrupos que recarregam no mês seguinte.",
+        "frase": "Nosso painel web permite que grupos de amigos aluguem o servidor do jogo pagando só as horas jogadas e dividindo a conta por PIX, o que afeta quem banca o servidor sozinho ao acabar com o mês pago por servidor vazio e com a cobrança entre amigos."
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000103",
+      "at": "2026-10-03T12:00:00.000Z",
+      "author": "Equipe",
+      "note": "V3 — O aplicativo",
+      "detail": "Por que mudou: o levantamento de concorrentes mostrou que painel web com PIX é o padrão do mercado e que, no plano mensal, o preço em nuvem fica acima do dos hosts brasileiros. Faltava um diferencial na experiência de jogar. Escrita neste formato a partir do que estava registrado no projeto na época.",
+      "data": {
+        "produto": "Aplicativo, no computador e na web, em que um grupo cria, paga e joga no seu próprio servidor de jogo.",
+        "usuario": "Grupos de 3 a 10 amigos que jogam juntos no PC jogos cooperativos e de sobrevivência, como Minecraft, Valheim e Palworld.",
+        "acao": "Criar o servidor do grupo e entrar no jogo com um clique, com o servidor ligado e tudo configurado.\nPagar só as horas jogadas e dividir a conta por PIX.",
+        "afetados": "Quem organiza o grupo: hoje configura tudo sozinho, paga o servidor inteiro e cobra os amigos.\nOs amigos que desistem de jogar junto porque entrar é complicado.",
+        "beneficio": "Menos tempo entre decidir jogar e estar jogando.\nFim do mês pago por um servidor vazio.\nFim da cobrança entre amigos.",
+        "metrica": "Tempo entre criar o servidor e a primeira partida com três ou mais amigos.\nNúmero de pagantes por grupo.\nGrupos que voltam a jogar no mês seguinte.",
+        "frase": "Nosso aplicativo de computador e web permite que grupos de amigos criem o servidor e entrem no jogo com um clique, pagando só as horas jogadas e dividindo a conta por PIX, o que afeta quem hoje configura e paga tudo sozinho ao reduzir o tempo até jogar e acabar com o servidor pago e vazio."
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000104",
+      "at": "2026-10-03T13:30:00.000Z",
+      "author": "Equipe",
+      "note": "Versão final — Bloco 1",
+      "detail": "Por que mudou: na discussão em equipe do Bloco 1 entraram o celular, as pessoas que ainda não têm grupo, as comunidades para encontrar jogadores, o roleplay com GTA VI, a configuração técnica completa em um clique e o suporte nível Statum. Tabela preenchida pela equipe no dia do evento.",
+      "data": {
+        "produto": "Aplicativo, no computador, na web e mobile, em que uma pessoa ou um grupo paga e joga no seu próprio servidor, possuindo funcionalidades exclusivas do mercado.",
+        "usuario": "Grupos de amigos ou pessoas que buscam jogar em grupo no PC jogos cooperativos e de sobrevivência ou de RolePlaying, como Minecraft ou GTA VI.",
+        "acao": "Criar o servidor do grupo, entrar e configurar (mods, backup, segurança e outras configurações técnicas) no jogo com um clique, com o servidor ligado e tudo configurado.\nPagar só as horas jogadas e dividir a conta por PIX.\nAcesso a comunidades para encontrar outros entusiastas para jogar juntos.\nSuporte e atendimento nível Statum.",
+        "afetados": "Quem organiza o grupo: hoje configura tudo sozinho, paga o servidor inteiro e cobra os amigos.\nOs amigos que desistem de jogar junto porque entrar é complicado.\nPessoas que ainda não têm o grupo de amigos para jogar juntos.",
+        "beneficio": "Menos tempo entre decidir jogar e estar jogando.\nFim do mês pago por um servidor vazio.\nFim da cobrança entre amigos.\nFacilidade na configuração e para jogar.\nComunidade para encontrar pessoas com vontade de jogar.",
+        "metrica": "Tempo entre criar o servidor e a primeira partida com três ou mais amigos.\nNúmero de pagantes por grupo.\nGrupos que voltam a jogar no mês seguinte.\nCrescimento da comunidade.",
+        "frase": "Nosso aplicativo para computador, web e celular permite que grupos de amigos, ou quem busca um grupo, tenham o próprio servidor de jogo pronto em um clique, pagando só as horas jogadas, dividindo a conta por PIX e encontrando parceiros na comunidade, o que afeta quem hoje configura e paga tudo sozinho, ou não tem com quem jogar, ao tornar rápido, barato e fácil jogar em grupo."
+      }
+    }
+  ]
+}

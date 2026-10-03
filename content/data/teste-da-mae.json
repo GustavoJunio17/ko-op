@@ -1,0 +1,28 @@
+{
+  "data": {
+    "ultima-vez": "Há duas semanas, em um servidor de Minecraft gerado pela minha empresa.",
+    "como-foi-criado": "Um dos responsáveis foi do setor de infraestrutura, e foi montado em uma Tenancy OCI onde já possuíam créditos sobrando.\nFoi provisionado o servidor e criada uma instalação do jogo. (O usuário não soube responder a fundo.)",
+    "dificuldade": "Não, não foi complicado criar o servidor de Minecraft.",
+    "custo": "O custo foi nulo, pois foi utilizado crédito que estava sobrando na assinatura da OCI.",
+    "uso": "O servidor ficava ativo 24h. O usuário jogava 4 horas; os demais usuários, variável para mais ou para menos.",
+    "desistencia": "Sim, o usuário já parou de jogar no servidor por conta de travamentos por desempenho ou latência de rede.",
+    "outras-experiencias": "O usuário teve outras experiências também, e mudaria a forma como é feita a divisão dos custos do servidor e as formas de pagamento."
+  },
+  "versions": [
+    {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "at": "2026-10-03T12:00:00.000Z",
+      "author": "Gustavo Junio",
+      "note": "Primeira entrevista",
+      "data": {
+        "ultima-vez": "Há duas semanas, em um servidor de Minecraft gerado pela minha empresa.",
+        "como-foi-criado": "Um dos responsáveis foi do setor de infraestrutura, e foi montado em uma Tenancy OCI onde já possuíam créditos sobrando.\nFoi provisionado o servidor e criada uma instalação do jogo. (O usuário não soube responder a fundo.)",
+        "dificuldade": "Não, não foi complicado criar o servidor de Minecraft.",
+        "custo": "O custo foi nulo, pois foi utilizado crédito que estava sobrando na assinatura da OCI.",
+        "uso": "O servidor ficava ativo 24h. O usuário jogava 4 horas; os demais usuários, variável para mais ou para menos.",
+        "desistencia": "Sim, o usuário já parou de jogar no servidor por conta de travamentos por desempenho ou latência de rede.",
+        "outras-experiencias": "O usuário teve outras experiências também, e mudaria a forma como é feita a divisão dos custos do servidor e as formas de pagamento."
+      }
+    }
+  ]
+}
