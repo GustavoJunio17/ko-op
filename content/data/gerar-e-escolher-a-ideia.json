@@ -1,0 +1,82 @@
+{
+  "data": {
+    "brainstorming": [
+      "Servidor pronto em um clique: escolhe o jogo e a versão, e o servidor sobe já configurado. Whitelist, backup, segurança e regras ficam numa tela visual, sem arquivo de configuração, terminal ou conhecimento técnico.",
+      "Racha proporcional às horas jogadas: cada amigo põe créditos via Pix numa carteira do grupo e paga só o tempo em que ele próprio esteve online. Sem crédito, o servidor não liga, e ninguém precisa cobrar ninguém.",
+      "Servidor que dorme e acorda sozinho: hiberna quando ninguém está online e liga automaticamente quando alguém tenta entrar. Acaba com o servidor pago ligado 24h para jogar 4h.",
+      "Comunidade Ko-op: usuários do Ko-op encontram gente para jogar, seja entrando em servidores abertos de outros grupos, seja formando grupos novos por jogo, horário e estilo. Cada novo pagante entra no racha e barateia a conta de todos.",
+      "Convite em um link: o amigo entra no servidor por um link ou QR code, sem digitar IP, escolher versão ou instalar mods à mão.",
+      "Bot de Discord: /ligar, /status, /pagar, /backup. O servidor é gerenciado onde o grupo já conversa.",
+      "Ping garantido no Brasil: servidores em São Paulo e Vinhedo, com medidor de latência antes de criar.",
+      "Desempenho automático: CPU e RAM aumentam quando o servidor lota ou o modpack é pesado e diminuem depois. Fim do travamento.",
+      "Modpacks em um clique: catálogo curado que instala os mesmos mods no servidor e nos jogadores, sem conflito de versão.",
+      "Máquina do tempo: backup automático antes de cada sessão. Base destruída ou mundo corrompido volta em um clique.",
+      "Sessão agendada: o grupo marca o horário, o app liga o servidor antes, avisa todo mundo e cobra só aquela sessão.",
+      "Modo criador: streamers abrem servidores para a própria comunidade e cada inscrito paga a sua entrada."
+    ],
+    "finalistas": [
+      {
+        "ideia": "Servidor pronto em um clique",
+        "resolve": "Configurar um servidor do zero sem conhecimento técnico é um pesadelo.",
+        "viavel": "Sim",
+        "diferente": "Existe parcialmente: para na criação e não ajuda a configurar para os jogadores."
+      },
+      {
+        "ideia": "Facilidade de pagar e rachar a conta",
+        "resolve": "Pagar em dólar com cartão internacional, com IOF, e rachar manualmente entre amigos é burocrático, e nem todo mundo tem cartão.",
+        "viavel": "Sim",
+        "diferente": "Sim: seria bem flexível, com Pix, compra de créditos e racha automático, proporcional ao tipo de servidor e à disponibilidade."
+      },
+      {
+        "ideia": "Comunidade Ko-op",
+        "resolve": "Nem sempre temos amigos disponíveis para jogar.",
+        "viavel": "Não, pois depende do número de usuários.",
+        "diferente": "Sim: conectar um dono de servidor com jogadores de forma orgânica, integrada aos servidores, ainda não existe nos provedores."
+      }
+    ]
+  },
+  "versions": [
+    {
+      "id": "00000000-0000-4000-8000-000000000201",
+      "at": "2026-10-03T16:04:17.000Z",
+      "author": "Equipe",
+      "note": "Brainstorming com 12 ideias e as 3 finalistas",
+      "data": {
+        "brainstorming": [
+          "Servidor pronto em um clique: escolhe o jogo e a versão, e o servidor sobe já configurado. Whitelist, backup, segurança e regras ficam numa tela visual, sem arquivo de configuração, terminal ou conhecimento técnico.",
+          "Racha proporcional às horas jogadas: cada amigo põe créditos via Pix numa carteira do grupo e paga só o tempo em que ele próprio esteve online. Sem crédito, o servidor não liga, e ninguém precisa cobrar ninguém.",
+          "Servidor que dorme e acorda sozinho: hiberna quando ninguém está online e liga automaticamente quando alguém tenta entrar. Acaba com o servidor pago ligado 24h para jogar 4h.",
+          "Comunidade Ko-op: usuários do Ko-op encontram gente para jogar, seja entrando em servidores abertos de outros grupos, seja formando grupos novos por jogo, horário e estilo. Cada novo pagante entra no racha e barateia a conta de todos.",
+          "Convite em um link: o amigo entra no servidor por um link ou QR code, sem digitar IP, escolher versão ou instalar mods à mão.",
+          "Bot de Discord: /ligar, /status, /pagar, /backup. O servidor é gerenciado onde o grupo já conversa.",
+          "Ping garantido no Brasil: servidores em São Paulo e Vinhedo, com medidor de latência antes de criar.",
+          "Desempenho automático: CPU e RAM aumentam quando o servidor lota ou o modpack é pesado e diminuem depois. Fim do travamento.",
+          "Modpacks em um clique: catálogo curado que instala os mesmos mods no servidor e nos jogadores, sem conflito de versão.",
+          "Máquina do tempo: backup automático antes de cada sessão. Base destruída ou mundo corrompido volta em um clique.",
+          "Sessão agendada: o grupo marca o horário, o app liga o servidor antes, avisa todo mundo e cobra só aquela sessão.",
+          "Modo criador: streamers abrem servidores para a própria comunidade e cada inscrito paga a sua entrada."
+        ],
+        "finalistas": [
+          {
+            "ideia": "Servidor pronto em um clique",
+            "resolve": "Configurar um servidor do zero sem conhecimento técnico é um pesadelo.",
+            "viavel": "Sim",
+            "diferente": "Existe parcialmente: para na criação e não ajuda a configurar para os jogadores."
+          },
+          {
+            "ideia": "Facilidade de pagar e rachar a conta",
+            "resolve": "Pagar em dólar com cartão internacional, com IOF, e rachar manualmente entre amigos é burocrático, e nem todo mundo tem cartão.",
+            "viavel": "Sim",
+            "diferente": "Sim: seria bem flexível, com Pix, compra de créditos e racha automático, proporcional ao tipo de servidor e à disponibilidade."
+          },
+          {
+            "ideia": "Comunidade Ko-op",
+            "resolve": "Nem sempre temos amigos disponíveis para jogar.",
+            "viavel": "Não, pois depende do número de usuários.",
+            "diferente": "Sim: conectar um dono de servidor com jogadores de forma orgânica, integrada aos servidores, ainda não existe nos provedores."
+          }
+        ]
+      }
+    }
+  ]
+}
