@@ -12,6 +12,12 @@ const statusText: Record<SheetStatus, string> = {
   concluido: "Preenchida",
 };
 
+// "Bloco 1 · Empatia" → grupo "Bloco 1", tema "Empatia".
+function splitBlock(block: string) {
+  const [group, ...rest] = block.split(" · ");
+  return { group, topic: rest.join(" · ") };
+}
+
 export default async function Home({
   searchParams,
 }: {
@@ -27,18 +33,17 @@ export default async function Home({
   const latest = versions[versions.length - 1];
   const data = viewing ? snapshotAt(docs, viewing.at) : docs.map((d) => d.data);
 
-  const mode = storageMode();
   // Qualquer um vê o botão Editar; a senha (ADMIN_PASSWORD) é pedida ao salvar.
-  const canEdit = mode !== "readonly" && !viewing;
+  const canEdit = storageMode() !== "readonly" && !viewing;
   const needsPassword = !!process.env.ADMIN_PASSWORD;
   const statuses = sheets.map((s, i) => sheetStatus(s, data[i]));
   const filled = statuses.filter((s) => s === "concluido").length;
 
-  // Agrupa as fichas por bloco para o índice lateral.
-  const groups = sheets.reduce<{ block: string; items: number[] }[]>((acc, s, i) => {
+  const groups = sheets.reduce<{ group: string; items: number[] }[]>((acc, s, i) => {
+    const { group } = splitBlock(s.block);
     const last = acc[acc.length - 1];
-    if (last?.block === s.block) last.items.push(i);
-    else acc.push({ block: s.block, items: [i] });
+    if (last?.group === group) last.items.push(i);
+    else acc.push({ group, items: [i] });
     return acc;
   }, []);
 
@@ -52,12 +57,12 @@ export default async function Home({
       </header>
 
       {viewing && (
-        <div className="old-version">
+        <div className="old-version" role="status">
           <div className="old-version-inner">
             <p>
-              Você está vendo a <strong>versão {viewing.number}</strong> de {versions.length}, de{" "}
+              Você está vendo a <strong>versão {viewing.number}</strong> de {versions.length}, salva em{" "}
               {formatDateTime(viewing.at)}
-              {viewing.note && <> — {viewing.note}</>}.
+              {viewing.note && <>: {viewing.note}</>}.
             </p>
             {viewing.detail && <p className="old-version-detail">{viewing.detail}</p>}
             <Link href="/">Voltar para a versão atual</Link>
@@ -65,55 +70,75 @@ export default async function Home({
         </div>
       )}
 
-      <section className="intro">
-        <p className="kicker">Ko-oP · Roadmap do projeto</p>
-        <h1>O servidor do seu grupo, pronto em um clique.</h1>
+      <section className="hero">
+        <h1>Do “bora jogar?” ao servidor ligado.</h1>
         <p className="lede">
-          Pague só as horas jogadas, divida a conta por PIX e encontre gente pra
-          jogar junto. Aqui fica o caminho da ideia até o pitch, etapa por etapa.
+          Ko-op cria o servidor do seu grupo em um clique: vocês pagam só as horas
+          jogadas, dividem a conta por PIX e encontram gente pra jogar junto. Este é o
+          caminho do projeto, da primeira ideia até o pitch.
         </p>
-        <p className="meta">
-          {filled} de {sheets.length} etapas preenchidas
-          {latest && !viewing && <> · atualizado em {formatDateTime(latest.at)}</>}
-        </p>
-      </section>
 
-      <div className="layout">
-        <nav className="index" aria-label="Etapas">
+        <div className="map" aria-label="Etapas do roadmap">
           {groups.map((g) => (
-            <div key={g.block}>
-              <p className="index-block">{g.block}</p>
-              <ol>
+            <div key={g.group} className="map-group">
+              <p className="map-group-name">{g.group}</p>
+              <ol className="map-tiles">
                 {g.items.map((i) => (
                   <li key={sheets[i].id}>
-                    <a href={`#${sheets[i].id}`} title={statusText[statuses[i]]}>
-                      <span className="dot" data-status={statuses[i]} aria-hidden />
-                      {sheets[i].title}
+                    <a
+                      href={`#${sheets[i].id}`}
+                      className="tile"
+                      data-status={statuses[i]}
+                      style={{ "--i": i } as React.CSSProperties}
+                    >
+                      <span className="tile-num">{i + 1}</span>
+                      <span className="tile-title">{sheets[i].title}</span>
+                      <span className="sr-only">: {statusText[statuses[i]]}</span>
                     </a>
                   </li>
                 ))}
               </ol>
             </div>
           ))}
-        </nav>
+        </div>
 
-        <main className="sheets">
-          {sheets.map((sheet, i) => (
-            <SheetSection
-              key={`${sheet.id}-${viewing?.id ?? "atual"}`}
-              sheet={sheet}
-              data={data[i]}
-              status={statusText[statuses[i]]}
-              changedHere={viewing?.sheetId === sheet.id}
-              canEdit={canEdit}
-              needsPassword={needsPassword}
-            />
-          ))}
-        </main>
-      </div>
+        <div className="map-foot">
+          <p className="progress">
+            <strong>{filled}</strong> de {sheets.length} etapas preenchidas
+            {latest && !viewing && <>, atualizado em {formatDateTime(latest.at)}</>}
+          </p>
+          <ul className="legend" aria-hidden>
+            <li data-status="concluido">Preenchida</li>
+            <li data-status="em-andamento">Em andamento</li>
+            <li data-status="vazio">A preencher</li>
+          </ul>
+        </div>
+      </section>
+
+      <main className="content">
+        {groups.map((g) => (
+          <section key={g.group} className="group">
+            <h2 className="group-name">{g.group}</h2>
+            {g.items.map((i) => (
+              <SheetSection
+                key={`${sheets[i].id}-${viewing?.id ?? "atual"}`}
+                number={i + 1}
+                sheet={sheets[i]}
+                topic={splitBlock(sheets[i].block).topic}
+                data={data[i]}
+                status={statuses[i]}
+                statusLabel={statusText[statuses[i]]}
+                changedHere={viewing?.sheetId === sheets[i].id}
+                canEdit={canEdit}
+                needsPassword={needsPassword}
+              />
+            ))}
+          </section>
+        ))}
+      </main>
 
       <footer className="footer">
-        <span>Ko-oP · Statum · {new Date().getFullYear()}</span>
+        <p>Ko-op, um projeto Statum. {new Date().getFullYear()}</p>
       </footer>
     </>
   );

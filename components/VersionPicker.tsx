@@ -21,11 +21,11 @@ export function VersionPicker({
         value={current ?? ""}
         onChange={(e) => router.push(e.target.value ? `/?v=${e.target.value}` : "/", { scroll: false })}
       >
-        <option value="">Atual{latest ? ` · v${latest.number}` : ""}</option>
+        <option value="">Atual{latest ? ` (v${latest.number})` : ""}</option>
         {[...versions].reverse().map((v) => (
           <option key={v.id} value={v.id}>
-            v{v.number} · {formatDay(v.at)} · {v.sheetTitle}
-            {v.note ? ` — ${v.note}` : ""}
+            v{v.number}, {formatDay(v.at)}: {v.sheetTitle}
+            {v.note ? ` (${v.note})` : ""}
           </option>
         ))}
       </select>

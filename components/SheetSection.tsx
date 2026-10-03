@@ -2,7 +2,13 @@
 
 import { useState, useTransition } from "react";
 import { saveSheet } from "@/app/actions";
-import { valueFor, type FieldValue, type Sheet, type SheetData } from "@/content/sheets";
+import {
+  valueFor,
+  type FieldValue,
+  type Sheet,
+  type SheetData,
+  type SheetStatus,
+} from "@/content/sheets";
 import { FieldInput, FieldView } from "./fields";
 
 const AUTHOR_KEY = "koop:author";
@@ -24,16 +30,22 @@ function storeAuthor(author: string) {
 type Editing = { draft: SheetData; author: string; note: string; password: string };
 
 export function SheetSection({
+  number,
   sheet,
+  topic,
   data,
   status,
+  statusLabel,
   changedHere,
   canEdit,
   needsPassword,
 }: {
+  number: number;
   sheet: Sheet;
+  topic: string;
   data: SheetData;
-  status: string;
+  status: SheetStatus;
+  statusLabel: string;
   changedHere: boolean;
   canEdit: boolean;
   needsPassword: boolean;
@@ -82,20 +94,26 @@ export function SheetSection({
   return (
     <section id={sheet.id} className="sheet" data-editing={!!editing}>
       <header className="sheet-head">
-        <div>
-          <p className="sheet-block">
-            {sheet.block} <span className="sheet-status">· {status}</span>
-            {changedHere && <span className="changed-tag">Alterada nesta versão</span>}
+        <span className="sheet-num" data-status={status} aria-hidden>
+          {number}
+        </span>
+        <div className="sheet-heading">
+          <h3>{sheet.title}</h3>
+          <p className="sheet-tags">
+            {topic && <span className="tag">{topic}</span>}
+            <span className="tag" data-status={status}>
+              {statusLabel}
+            </span>
+            {changedHere && <span className="tag tag-changed">Alterada nesta versão</span>}
           </p>
-          <h2>{sheet.title}</h2>
-          <p className="sheet-desc">{sheet.description}</p>
         </div>
         {canEdit && !editing && (
-          <button type="button" className="text-button" onClick={startEdit}>
+          <button type="button" className="button-secondary" onClick={startEdit}>
             Editar
           </button>
         )}
       </header>
+      <p className="sheet-desc">{sheet.description}</p>
 
       {message && !editing && (
         <p className={message.tone === "error" ? "alert" : "note"}>{message.text}</p>
